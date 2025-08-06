@@ -1,74 +1,76 @@
-print("This script is meant to be at least 30 lines long so that i do not get less marks in lab1")
+"""
+Sudoku Solver
 
-from functools import lru_cache
+This script attempts to solve a 9x9 Sudoku puzzle using backtracking.
+"""
 
-def isSafe(num:int,x:int,y:int,sudoku:list):
-    '''Function to check whether or not the current block is safe or not..'''
+from typing import List
 
-    # check teh 3x3 box
-    cornerx = ( x // 3 ) * 3
-    cornery = ( y // 3 ) * 3
 
-    for i in range(cornerx,cornerx+3):
-        for j in range(cornery,cornery+3):
+def is_safe(num: int, x: int, y: int, sudoku: List[List[int]]) -> bool:
+    """Check whether placing 'num' at position (x, y) is safe."""
+
+    # Check 3x3 subgrid
+    corner_x = (x // 3) * 3
+    corner_y = (y // 3) * 3
+    for i in range(corner_x, corner_x + 3):
+        for j in range(corner_y, corner_y + 3):
             if sudoku[i][j] == num:
                 return False
 
+    # Check row and column
     for i in range(9):
-        if(sudoku[i][y] == num or sudoku[x][j] == num):
+        if sudoku[i][y] == num or sudoku[x][i] == num:
             return False
 
     return True
 
 
-# @lru_cache  Note that lru cahce cannot hash the mutable objects like list so either you need to first convert the list to tuple
-def solveSudoku(sudoku):
-    '''Tries all the combinations'''
+def solve_sudoku(sudoku: List[List[int]]) -> bool:
+    """Attempt to solve the Sudoku puzzle using backtracking."""
     for i in range(9):
         for j in range(9):
-            if(sudoku[i][j] == 0):
-                for num in range(1,10):
-                    if isSafe(num,i,j,sudoku):
+            if sudoku[i][j] == 0:
+                for num in range(1, 10):
+                    if is_safe(num, i, j, sudoku):
                         sudoku[i][j] = num
-                        if solveSudoku(sudoku):
+                        if solve_sudoku(sudoku):
                             return True
                         sudoku[i][j] = 0
                 return False
     return True
 
 
-
-
-
-
-# remove thie line jsut ot correct eh syntax
-def printSudoku(sudoku):
-    '''Prints the Sudoku board.'''
+def print_sudoku(sudoku: List[List[int]]) -> None:
+    """Print the Sudoku board."""
     for row in sudoku:
         print(" ".join(str(num) if num != 0 else '.' for num in row))
 
 
-sudoku = [
-    [5, 3, 0, 0, 7, 0, 0, 0, 0],
-    [6, 0, 0, 1, 9, 5, 0, 0, 0],
-    [0, 9, 8, 0, 0, 0, 0, 6, 0],
+def main() -> None:
+    """Main function to drive the Sudoku solver."""
+    sudoku = [
+        [5, 3, 0, 0, 7, 0, 0, 0, 0],
+        [6, 0, 0, 1, 9, 5, 0, 0, 0],
+        [0, 9, 8, 0, 0, 0, 0, 6, 0],
+        [8, 0, 0, 0, 6, 0, 0, 0, 3],
+        [4, 0, 0, 8, 0, 3, 0, 0, 1],
+        [7, 0, 0, 0, 2, 0, 0, 0, 6],
+        [0, 6, 0, 0, 0, 0, 2, 8, 0],
+        [0, 0, 0, 4, 1, 9, 0, 0, 5],
+        [0, 0, 0, 0, 8, 0, 0, 7, 9],
+    ]
 
-    [8, 0, 0, 0, 6, 0, 0, 0, 3],
-    [4, 0, 0, 8, 0, 3, 0, 0, 1],
-    [7, 0, 0, 0, 2, 0, 0, 0, 6],
+    print("\nOriginal Sudoku:")
+    print_sudoku(sudoku)
 
-    [0, 6, 0, 0, 0, 0, 2, 8, 0],
-    [0, 0, 0, 4, 1, 9, 0, 0, 5],
-    [0, 0, 0, 0, 8, 0, 0, 7, 9]
-]
+    if solve_sudoku(sudoku):
+        print("\nSolved Sudoku:")
+        print_sudoku(sudoku)
+    else:
+        print("No solution exists.")
 
-print("\nOriginal Sudoku:")
-printSudoku(sudoku)
 
-if solveSudoku(sudoku):
-    print("\nSolved Sudoku:")
-    printSudoku(sudoku)
-else:
-    print("No solution exists.")
-
+if __name__ == "__main__":
+    main()
 
