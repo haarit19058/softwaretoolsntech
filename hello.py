@@ -20,25 +20,32 @@ def is_safe(num: int, x: int, y: int, sudoku: List[List[int]]) -> bool:
 
     # Check row and column
     for i in range(9):
-        if sudoku[i][y] == num or sudoku[x][i] == num:
+        if num in (sudoku[i][y], sudoku[x][i]):
             return False
 
     return True
+
 
 
 def solve_sudoku(sudoku: List[List[int]]) -> bool:
     """Attempt to solve the Sudoku puzzle using backtracking."""
     for i in range(9):
         for j in range(9):
-            if sudoku[i][j] == 0:
-                for num in range(1, 10):
-                    if is_safe(num, i, j, sudoku):
-                        sudoku[i][j] = num
-                        if solve_sudoku(sudoku):
-                            return True
-                        sudoku[i][j] = 0
-                return False
+            if sudoku[i][j] != 0:
+                continue
+
+            for num in range(1, 10):
+                if not is_safe(num, i, j, sudoku):
+                    continue
+
+                sudoku[i][j] = num
+                if solve_sudoku(sudoku):
+                    return True
+                sudoku[i][j] = 0
+
+            return False
     return True
+
 
 
 def print_sudoku(sudoku: List[List[int]]) -> None:
@@ -73,4 +80,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
